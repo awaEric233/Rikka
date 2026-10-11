@@ -18,7 +18,7 @@ export function parseCommand(msg: QQBotInboundMessage): Array<string> | null {
 		return null;
 	}
 	let trimmed = clean.substring(1).trimEnd();
-	console.log(trimmed);
+	console.log(`🚀 Command invoke by ${msg.senderName}: ${trimmed}`);
 	return trimmed.split(" ");
 }
 
