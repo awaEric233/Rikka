@@ -1,25 +1,35 @@
+import type { QQBotInboundMessage, QQBot } from "@tencent-connect/qqbot-nodejs";
 import { COMMANDS } from "../commands/index.js";
 
-export function clear(msg: string): string {
-	return msg.replace(/@[^\n]*?(?=\s*\/)\s*/, "");
+export function clear(msg: QQBotInboundMessage): string {
+	return msg.content.replace(
+		`<@${msg.mentions?.find((x) => x.is_you)?.id}> `,
+		"",
+	);
 }
 
 export function isCommand(msg: string): boolean {
 	return msg.startsWith("/");
 }
 
-export function parseCommand(msg: string): Array<string> | null {
-	if (isCommand(msg)) {
+export function parseCommand(msg: QQBotInboundMessage): Array<string> | null {
+	let clean = clear(msg);
+	if (!isCommand(clean)) {
 		return null;
 	}
-	let clean = clear(msg);
 	let trimmed = clean.substring(1).trimEnd();
+	console.log(trimmed);
 	return trimmed.split(" ");
 }
 
-export function matchCommand(msg: string) {
+export async function matchCommand(msg: QQBotInboundMessage, bot: QQBot) {
 	let parsed = parseCommand(msg);
+	msg;
 	if (parsed) {
-		COMMANDS.find((x) => x.name === parsed[0])?.execute(parsed.slice(1));
+		await COMMANDS.find((x) => x.name === parsed[0])?.execute(
+			bot,
+			msg.replyTarget,
+			parsed.slice(1),
+		);
 	}
 }

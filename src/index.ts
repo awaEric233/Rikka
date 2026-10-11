@@ -1,8 +1,9 @@
 import dotenv from "dotenv";
 import { FULL_INTENTS } from "@tencent-connect/qqbot-nodejs/protocol";
 import { QQBot } from "@tencent-connect/qqbot-nodejs";
-import { matchCommand } from "./services/parser.js";
+import { registerPanel } from "./commands/index.js";
 import { isAttingMe } from "./services/messages.js";
+import { matchCommand } from "./services/parser.js";
 import { processVerify } from "./services/security.js";
 
 dotenv.config();
@@ -17,14 +18,18 @@ const bot = new QQBot({
 	intents,
 });
 
+export let readyTime = new Date(0).getTime();
+
 bot.on("ready", async (ctx) => {
 	console.log("🥳 Bot ready!");
+	readyTime = new Date().getTime();
+	await registerPanel(bot);
 });
 
 bot.on("message", async (ctx, msg) => {
 	let isAtting = isAttingMe(msg);
 	if (isAtting) {
-		matchCommand(msg.content);
+		await matchCommand(msg, bot);
 	}
 });
 
