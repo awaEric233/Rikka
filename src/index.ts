@@ -22,7 +22,7 @@ export let readyTime = 0;
 
 bot.on("ready", async (ctx) => {
 	console.log("🥳 Bot ready!");
-	if (readyTime == 0) {
+	if (readyTime === 0) {
 		readyTime = new Date().getTime();
 	}
 	await registerPanel(bot);
