@@ -18,11 +18,13 @@ const bot = new QQBot({
 	intents,
 });
 
-export let readyTime = new Date(0).getTime();
+export let readyTime = 0;
 
 bot.on("ready", async (ctx) => {
 	console.log("🥳 Bot ready!");
-	readyTime = new Date().getTime();
+	if (readyTime == 0) {
+		readyTime = new Date().getTime();
+	}
 	await registerPanel(bot);
 });
 
